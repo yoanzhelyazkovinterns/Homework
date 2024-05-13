@@ -25,7 +25,7 @@ public class Main {
             var n = scanner.nextInt();
 
             List<Integer> numbers = IntStream.range(0, n)
-                    .mapToObj(i -> scanner.nextInt())
+                    .mapToObj(_ -> scanner.nextInt())
                     .collect(Collectors.toList());
 
             var result = countDuplicates(numbers);

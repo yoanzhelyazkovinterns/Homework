@@ -37,4 +37,12 @@ public class AmazonSearchResultsPage extends BaseWebPage {
                 .map(WebElement::getText)
                 .collect(Collectors.toList());
     }
+    
+    public void clickFirstResultPaperbackCopy() {
+        driver.findElements(BookTypes)
+                .stream()
+                .findFirst()
+                .get()
+                .click();
+    }
 }
