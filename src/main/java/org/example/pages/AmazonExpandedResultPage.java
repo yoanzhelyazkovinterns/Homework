@@ -2,17 +2,13 @@ package org.example.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.PrimitiveIterator;
-import java.util.stream.Collectors;
 
 public class AmazonExpandedResultPage extends BaseWebPage {
 
     private final By ProductTitle = By.xpath("//span[@id='productTitle']");
     private final By ProductSubtitle = By.xpath("//span[@id='productSubtitle']");
     private final By ProductPrice = By.xpath("//span[@class='a-price aok-align-center reinventPricePriceToPayMargin priceToPay']");
+    private final By AddToBasketButton = By.xpath("//span/input[@id='add-to-cart-button']");
 
     public AmazonExpandedResultPage(WebDriver driver) {
         super(driver);
@@ -27,6 +23,10 @@ public class AmazonExpandedResultPage extends BaseWebPage {
     }
 
     public String getProductPrice() {
-        return driver.findElement(ProductPrice).getText();
+        return driver.findElement(ProductPrice).getText().replace('\n', '.').trim();
+    }
+
+    public void clickOnAddToBasketButton() {
+        driver.findElement(AddToBasketButton).click();
     }
 }

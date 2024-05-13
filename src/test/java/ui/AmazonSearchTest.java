@@ -4,6 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.example.pages.AmazonExpandedResultPage;
 import org.example.pages.AmazonHomePage;
 import org.example.pages.AmazonSearchResultsPage;
+import org.example.pages.AmazonShoppingBasketPage;
 import org.example.utils.ConfigurationProvider;
 import org.example.utils.DriverProvider;
 import org.junit.jupiter.api.*;
@@ -20,6 +21,7 @@ public class AmazonSearchTest {
     private AmazonHomePage amazonHomePage;
     private AmazonSearchResultsPage amazonSearchResultsPage;
     private AmazonExpandedResultPage amazonExpandedResultPage;
+    private AmazonShoppingBasketPage amazonShoppingBasketPage;
 
     @BeforeAll
     public static void setupClass() {
@@ -33,6 +35,7 @@ public class AmazonSearchTest {
         amazonHomePage = new AmazonHomePage(driver);
         amazonSearchResultsPage = new AmazonSearchResultsPage(driver);
         amazonExpandedResultPage = new AmazonExpandedResultPage(driver);
+        amazonShoppingBasketPage = new AmazonShoppingBasketPage(driver);
 
         driver.navigate().to(configurationProvider.getApplicationUrl());
         amazonHomePage.clickAcceptCookiesButton();
@@ -59,7 +62,7 @@ public class AmazonSearchTest {
 
         var firstResultHeader = getFirstElementInCollection(amazonSearchResultsPage.getResultHeaders());
         var firstResultSellingPrice = getFirstElementInCollection(amazonSearchResultsPage.getBookPrices());
-        
+
         amazonSearchResultsPage.clickFirstResultPaperbackCopy();
 
         var productTitle = amazonExpandedResultPage.getProductTitle();
@@ -68,9 +71,36 @@ public class AmazonSearchTest {
 
         assertAll(
                 () -> assertEquals(firstResultHeader, productTitle),
-                () -> assertTrue(productSubtitle.contains(BOOK_TYPE)),
+                () -> assertTrue(productSubtitle.startsWith(BOOK_TYPE)),
                 () -> assertEquals(firstResultSellingPrice, productPrice)
         );
+    }
+
+        @Test
+        public void addBookToBasket() {
+            SearchForSpecificBook();
+
+            var firstResultHeader = getFirstElementInCollection(amazonSearchResultsPage.getResultHeaders());
+            var firstResultSellingPrice = getFirstElementInCollection(amazonSearchResultsPage.getBookPrices());
+
+            amazonSearchResultsPage.clickFirstResultPaperbackCopy();
+            amazonExpandedResultPage.clickOnAddToBasketButton();
+            amazonHomePage.clickBasketButton();
+            amazonShoppingBasketPage.clickMarkAsGiftCheckbox();
+
+            var basketItemsCount = amazonShoppingBasketPage.getItemsInShoppingBasket().size();
+            var firstBasketItemTitle = getFirstElementInCollection(amazonShoppingBasketPage.getAddedItemsTitle());
+            var firstBasketItemType = getFirstElementInCollection(amazonShoppingBasketPage.getAddedItemsTypes());
+            var basketSubTotal = amazonShoppingBasketPage.getSubTotal();
+            var isMarkedAsGiftCheckboxSelected = amazonShoppingBasketPage.isItemAddedAsAGiftCheckboxTicked();
+
+            assertAll(
+                    () -> assertEquals(firstResultHeader, firstBasketItemTitle),
+                    () -> assertEquals(BOOK_TYPE, firstBasketItemType),
+                    () -> assertEquals(firstResultSellingPrice, basketSubTotal),
+                    () -> assertEquals(basketItemsCount, 1),
+                    () -> assertTrue(isMarkedAsGiftCheckboxSelected)
+            );
     }
 
     @AfterEach

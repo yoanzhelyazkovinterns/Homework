@@ -35,6 +35,7 @@ public class AmazonSearchResultsPage extends BaseWebPage {
         return driver.findElements(BookPrices)
                 .stream()
                 .map(WebElement::getText)
+                .map(e -> e.replace('\n', '.'))
                 .collect(Collectors.toList());
     }
     
