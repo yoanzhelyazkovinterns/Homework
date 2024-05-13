@@ -6,9 +6,9 @@ public class MockService {
 
     public void execute() throws Exception {
         Random random = new Random();
-        int time = random.nextInt(1200) + 1; // Random execution time between 1 and 1200 milliseconds
+        int time = random.nextInt(1200) + 1;
         Thread.sleep(time);
-        if (random.nextDouble() < 0.3) { // 30% chance of failure
+        if (random.nextDouble() < 0.3) {
             throw new Exception("Execution failed");
         }
     }
